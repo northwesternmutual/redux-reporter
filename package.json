@@ -1,0 +1,36 @@
+{
+  "name": "redux-reporter",
+  "version": "0.0.0",
+  "description": "Redux middleware for reporting actions to third party APIs.",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "rm -rf lib/ && babel src --out-dir lib",
+    "prepublish": "npm run build",
+    "test": "./node_modules/.bin/mocha test/**/*.test.js",
+    "lint": "eslint src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ezekielchentnik/redux-reporter.git"
+  },
+  "homepage": "https://github.com/ezekielchentnik/redux-reporter",
+  "keywords": [
+    "redux",
+    "middleware",
+    "redux-middleware",
+    "adobe dtm",
+    "new relic",
+    "crash reporter",
+    "analytics"
+  ],
+  "author": "Ezekiel Chentnik <zeek@ezekielchentnik.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.10.1",
+    "chai": "^3.3.0",
+    "eslint": "^3.1.0",
+    "flux-standard-action": "^0.6.1",
+    "mocha": "^2.3.3",
+    "sinon": "^1.17.1"
+  }
+}
