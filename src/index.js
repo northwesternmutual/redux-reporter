@@ -1,4 +1,4 @@
-import isFSA from 'flux-standard-action';
+import { isFSA } from 'flux-standard-action';
 
 const defaultSelect = ({ meta = {} }) => meta.report;
 
