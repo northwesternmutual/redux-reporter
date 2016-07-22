@@ -25,18 +25,21 @@ const reporter = (handler, select = defaultSelect) => ({ getState }) => (next) =
     return returnValue;
 };
 
-export const errorReporter = (handler) => reporter(handler, ({ error, payload }, getState) => {
+const errorSelect = ({ error = false, payload }) => {
+
     if (!error) {
         return null;
     }
-    if (!payload) {
-        throw Error('Actions that represent errors need an error object as payload');
+
+    if(!payload){
+        console.warn('Actions that represent errors should have an error object as payload, generic error used');
+        return new Error(type);
     }
 
-    handler(payload, getState);
-
     return payload;
-});
+}
+
+export const errorReporter = (handler) => reporter(handler, errorSelect);
 
 export const crashReporter = (handler) => ({ getState }) => (next) => (action) => {
     let returnValue;

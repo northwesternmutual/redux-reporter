@@ -1,6 +1,6 @@
 {
   "name": "redux-reporter",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Redux middleware for reporting actions to third party APIs.",
   "main": "lib/index.js",
   "scripts": {
