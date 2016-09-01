@@ -65,21 +65,6 @@ export default (initialState = {}) => {
 #### Analytics
 This example uses Adobe DTM, but this pattern will work for other APIs (keen, segment, etc.)
 ```js
-// /middleware/adobedtm.js
-import reporter from 'redux-reporter';
-
-const select = ({ meta = {} }) => meta.analytics;
-
-export default reporter(({ type, payload }) => {
-
-    try {
-        window._satellite.setVar('payload', payload);
-        window._satellite.track(type);
-    } catch (err) {}
-
-}, select);
-
-
 // /actions/MyActions.js
 export function myAction() {
     let type = 'MY_ACTION';
@@ -94,6 +79,19 @@ export function myAction() {
     };
 }
 
+// /middleware/adobedtm.js
+import reporter from 'redux-reporter';
+
+const select = ({ meta = {} }) => meta.analytics;
+
+export default reporter(({ type, payload }) => {
+
+    try {
+        window._satellite.setVar('payload', payload);
+        window._satellite.track(type);
+    } catch (err) {}
+
+}, select);
 ```
 
 
@@ -102,18 +100,7 @@ export function myAction() {
 #### error reporting
 
 ```js
-
-// /actions/MyActions.js
-export function myAction() {
-    let type = 'MY_ERROR_ACTION';
-    return {
-        type,
-        error: true
-        payload: new Error('My Handled Error')
-    };
-}
-
-
+// /middleware/newrelic.js
 import { errorReporter as newrelicErrorReporter, crashReporter as newrelicCrashReporter } from 'redux-reporter';
 
 const report = (error) => {
@@ -125,11 +112,29 @@ const report = (error) => {
 export const crashReporter = newrelicCrashReporter(report);
 export const errorReporter = newrelicErrorReporter(report);
 
+// /actions/MyActions.js
+export function myAction() {
+    let type = 'MY_ERROR_ACTION';
+    return {
+        type,
+        error: true
+        payload: new Error('My Handled Error')
+    };
+}
 ```
 
 #### analytics reporting
 
 ```js
+// /middleware/newrelic.js
+import reporter from 'redux-reporter';
+
+export const analyticsReporter = reporter(({ type, payload }) => {
+  try {
+    window.newrelic.addPageAction(type, payload);
+  } catch (err) {}
+}, ({ meta = {} }) => meta.analytics);
+
 // /actions/MyActions.js
 export function myAction() {
     let type = 'MY_ACTION';
@@ -143,14 +148,6 @@ export function myAction() {
         }
     };
 }
-
-import reporter from 'redux-reporter';
-
-export const analyticsReporter = reporter(({ type, payload }) => {
-  try {
-    window.newrelic.addPageAction(type, payload);
-  } catch (err) {}
-}, ({ meta = {} }) => meta.analytics);
 ```
 
 ## Reporting to Multiple APIs
