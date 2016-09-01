@@ -3,33 +3,26 @@
 [![Build Status](https://travis-ci.org/ezekielchentnik/redux-reporter.svg)](https://travis-ci.org/ezekielchentnik/redux-reporter)
 [![npm version](https://img.shields.io/npm/v/redux-reporter.svg?style=flat-square)](https://www.npmjs.com/package/redux-reporter)
 
-Redux middleware for reporting actions to third party APIs.  Extremely useful for analytics and error handling.
+Redux middleware for reporting actions to third party APIs.  Extremely useful for analytics and error handling.  Can be used with various APIs such as New Relic, Sentry, Adobe DTM, Keen
 
 ## Installation
 
 ```js
 npm install --save redux-reporter
 ```
-
 ## Usage
-```js
-// todo
-```
-
-### Analytics reporting
 
 #### Generic Reporting
 
 ```js
-import reporter from './reporter';
+// /middleware/myreporter.js
+import reporter from 'redux-reporter';
 
 export default reporter(({ type, payload }, getState) => {
 
     try {
         // report to external API
-    } catch (err) {
-        console.error(err);
-    }
+    } catch (err) {}
 
 });
 
@@ -49,9 +42,12 @@ export function myAction() {
 }
 
 ```
-#### Adobe DTM (Analytics)
+
+#### Analytics
+This example uses Adobe DTM, but this pattern will work for other APIs (keen, segment, etc.)
 ```js
-import reporter from './reporter';
+// /middleware/adobedtm.js
+import reporter from 'redux-reporter';
 
 const select = ({ meta = {} }) => meta.analytics;
 
@@ -60,9 +56,7 @@ export default reporter(({ type, payload }) => {
     try {
         window._satellite.setVar('payload', payload);
         window._satellite.track(type);
-    } catch (err) {
-        console.error(err);
-    }
+    } catch (err) {}
 
 }, select);
 
@@ -83,9 +77,10 @@ export function myAction() {
 
 ```
 
-#### Optimizely Goal Tracking
+## Optimizely - Goal Tracking
 ```js
-import reporter from './reporter';
+// /middleware/optimizely.js
+import reporter from 'redux-reporter';
 
 export default reporter(({ type, payload }) => {
 
@@ -111,63 +106,91 @@ export function myAction() {
 
 ```
 
-#### Report to Multiple Analytics APIs
+## Reporting to Multiple APIs
+You can report to multiple APIs by configuring multiple middlewares and attaching multiple attributes to your actions
 ```js
 
 // /actions/MyActions.js
 export function myAction() {
     let type = 'MY_ACTION';
-
-    let report =
-
     return {
         type,
         meta: {
-            adobedtm: {
-                type,
-                payload: {
-                    userType: 'xyz',
-                    region: 'xyz'
-                }
-            },
-            newrelic: {
-                type,
-                payload: 'example payload'
-            }
+          analytics: {
+              type,
+              payload: 'example payload'
+          },
+          experiments: {
+              type,
+              payload: 'example payload'
+          }
         }
     };
 }
 
 ```
 
-#### Extending with global state
+## New Relic
+
+#### error reporting
+
 ```js
-// todo
+
+// /actions/MyActions.js
+export function myAction() {
+    let type = 'MY_ERROR_ACTION';
+    return {
+        type,
+        error: true
+        payload: new Error('My Handled Error')
+    };
+}
+
+
+import { errorReporter as newrelicErrorReporter, crashReporter as newrelicCrashReporter } from 'redux-reporter';
+
+const report = (error) => {
+  try {
+    window.newrelic.noticeError(error);
+  } catch (err) {}
+};
+
+export const crashReporter = newrelicCrashReporter(report);
+export const errorReporter = newrelicErrorReporter(report);
+
 ```
 
-### Error reporting
+#### analytics reporting
+
 ```js
-// todo
+// /actions/MyActions.js
+export function myAction() {
+    let type = 'MY_ACTION';
+    return {
+        type,
+        meta: {
+          analytics: {
+              type,
+              payload: 'example payload'
+          }
+        }
+    };
+}
+
+import reporter from 'redux-reporter';
+
+export const analyticsReporter = reporter(({ type, payload }) => {
+  try {
+    window.newrelic.addPageAction(type, payload);
+  } catch (err) {
+        // console.error(err);
+  }
+}, ({ meta = {} }) => meta.analytics);
 ```
 
-#### New relic
-```js
-// todo
-```
-
-#### Sentry
-```js
-// todo
-```
-
-### Crash reporting
-
-#### New relic
-```js
-// todo
-```
-
-#### Sentry
-```js
-// todo
-```
+## Todo
+- Add example:  using global state
+- Add example:  Error reporting
+- Add example:  New Relic
+- Add example:  Sentry
+- Add example:  Crash Reporting
