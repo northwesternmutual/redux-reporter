@@ -11,7 +11,7 @@ const reporter = (handler, select = defaultSelect) => ({ getState }) => (next) =
     }
 
     if (!isFSA(action)) {
-        throw Error('Action must be a Flux Standard Action - https://github.com/acdlite/flux-standard-action');
+        console.warn('Action should be a Flux Standard Action - https://github.com/acdlite/flux-standard-action');
     }
 
     const report = select(action);
