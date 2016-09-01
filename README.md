@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/ezekielchentnik/redux-reporter.svg)](https://travis-ci.org/ezekielchentnik/redux-reporter)
 [![npm version](https://img.shields.io/npm/v/redux-reporter.svg?style=flat-square)](https://www.npmjs.com/package/redux-reporter)
 
-Redux middleware for reporting actions to third party APIs.  Extremely useful for analytics and error handling.  Can be used with various APIs such as New Relic, Sentry, Adobe DTM, Keen
+Redux middleware for reporting actions to third party APIs.  This package is extremely useful for analytics and error handling.  Can be used with various APIs such as New Relic, Sentry, Adobe DTM, Keen
 
 ## Installation
 
