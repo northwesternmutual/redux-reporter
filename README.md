@@ -13,9 +13,9 @@ npm install --save redux-reporter
 ## Usage
 
 #### Generic Reporting
-
+Create your reporting middleware
 ```js
-// /middleware/myreporter.js
+// /middleware/myReporter.js
 import reporter from 'redux-reporter';
 
 export default reporter(({ type, payload }, getState) => {
@@ -25,8 +25,9 @@ export default reporter(({ type, payload }, getState) => {
     } catch (err) {}
 
 });
-
-
+```
+Attach meta data to your actions
+```js
 // /actions/MyActions.js
 export function myAction() {
     let type = 'MY_ACTION';
@@ -39,6 +40,24 @@ export function myAction() {
             }
         }
     };
+}
+
+```
+Configure your store with middleware
+```js
+// /store/configureStore.js
+import { compose, createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import rootReducer from './reducers/rootReducer';
+import myReporter from './middleware/myReporter';
+const isBrowser = (typeof window !== 'undefined');
+const enhancer = compose(
+    applyMiddleware(...[thunk, myReporter]),
+    isBrowser && window.devToolsExtension) ? window.devToolsExtension() : (f) => f
+);
+
+export default (initialState = {}) => {
+  return createStore(rootReducer, initialState, enhancer);
 }
 
 ```
@@ -182,9 +201,7 @@ import reporter from 'redux-reporter';
 export const analyticsReporter = reporter(({ type, payload }) => {
   try {
     window.newrelic.addPageAction(type, payload);
-  } catch (err) {
-        // console.error(err);
-  }
+  } catch (err) {}
 }, ({ meta = {} }) => meta.analytics);
 ```
 
