@@ -96,58 +96,6 @@ export function myAction() {
 
 ```
 
-## Optimizely - Goal Tracking
-```js
-// /middleware/optimizely.js
-import reporter from 'redux-reporter';
-
-export default reporter(({ type, payload }) => {
-
-    window.optimizely = window.optimizely || [];
-    window.optimizely.push(['trackEvent', type, payload]);
-
-}, ({ meta = {} }) => meta.experiments);
-
-
-// /actions/MyActions.js
-export function myAction() {
-    let type = 'MY_ACTION';
-    return {
-        type,
-        meta: {
-            experiments: {
-                type,
-                payload: 'example payload'
-            }
-        }
-    };
-}
-
-```
-
-## Reporting to Multiple APIs
-You can report to multiple APIs by configuring multiple middlewares and attaching multiple attributes to your actions
-```js
-
-// /actions/MyActions.js
-export function myAction() {
-    let type = 'MY_ACTION';
-    return {
-        type,
-        meta: {
-          analytics: {
-              type,
-              payload: 'example payload'
-          },
-          experiments: {
-              type,
-              payload: 'example payload'
-          }
-        }
-    };
-}
-
-```
 
 ## New Relic
 
@@ -205,9 +153,59 @@ export const analyticsReporter = reporter(({ type, payload }) => {
 }, ({ meta = {} }) => meta.analytics);
 ```
 
+## Reporting to Multiple APIs
+You can report to multiple APIs by configuring multiple middlewares and attaching multiple attributes to your actions
+```js
+
+// /actions/MyActions.js
+export function myAction() {
+    let type = 'MY_ACTION';
+    return {
+        type,
+        meta: {
+          analytics: {
+              type,
+              payload: 'example payload'
+          },
+          experiments: {
+              type,
+              payload: 'example payload'
+          }
+        }
+    };
+}
+
+```
+
+## Optimizely
+redux-reporter can be used for goal tracking with optimizely
+```js
+// /middleware/optimizely.js
+import reporter from 'redux-reporter';
+
+export default reporter(({ type, payload }) => {
+
+    window.optimizely = window.optimizely || [];
+    window.optimizely.push(['trackEvent', type, payload]);
+
+}, ({ meta = {} }) => meta.experiments);
+
+
+// /actions/MyActions.js
+export function myAction() {
+    let type = 'MY_ACTION';
+    return {
+        type,
+        meta: {
+            experiments: {
+                type,
+                payload: 'example payload'
+            }
+        }
+    };
+}
+
+```
 ## Todo
-- Add example:  using global state
-- Add example:  Error reporting
-- Add example:  New Relic
-- Add example:  Sentry
-- Add example:  Crash Reporting
+- Add examples:  using global state, Sentry
+- Add tests
