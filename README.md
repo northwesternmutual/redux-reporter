@@ -34,7 +34,7 @@ export function myAction() {
     return {
         type,
         meta: {
-            report: {
+            report: {  // default attribute that is selected by redux-reporter
                 type,
                 payload: 'example payload'
             }
@@ -43,13 +43,14 @@ export function myAction() {
 }
 
 ```
-Configure your store with middleware
+Configure store with your middleware
 ```js
 // /store/configureStore.js
 import { compose, createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import rootReducer from './reducers/rootReducer';
-import myReporter from './middleware/myReporter';
+import myReporter from './middleware/myReporter';  // import your reporter
+
 const isBrowser = (typeof window !== 'undefined');
 const enhancer = compose(
     applyMiddleware(...[thunk, myReporter]),
@@ -73,7 +74,10 @@ export function myAction() {
         meta: {
             analytics: {
                 type,
-                payload: 'example payload'
+                payload: {
+                  userType: 'example',
+                  someOtherData: '1234'
+                }
             }
         }
     };
@@ -82,7 +86,8 @@ export function myAction() {
 // /middleware/adobedtm.js
 import reporter from 'redux-reporter';
 
-const select = ({ meta = {} }) => meta.analytics;
+// create custom select function to select desired slice of your action
+const select = ({ meta = {} }) => meta.analytics;  
 
 export default reporter(({ type, payload }) => {
 
@@ -92,6 +97,8 @@ export default reporter(({ type, payload }) => {
     } catch (err) {}
 
 }, select);
+
+// inside Adobe DTM we create a direct call rule with the same name/condition as our action type
 ```
 
 
