@@ -1,6 +1,6 @@
 {
   "name": "redux-reporter",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "Redux middleware for reporting actions to third party APIs.",
   "main": "dist/bundle.umd.js",
   "jsnext:main": "dist/bundle.es.js",
