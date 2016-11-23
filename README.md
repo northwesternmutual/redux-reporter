@@ -63,7 +63,7 @@ export default (initialState = {}) => {
 
 ```
 Reporting to Multiple APIs:
-You can report to multiple APIs by configuring multiple middlewares and attaching multiple attributes to your actions
+You can report to multiple APIs by configuring multiple middlewares and attaching additional attributes to your actions
 ```js
 
 // /actions/MyActions.js
@@ -209,4 +209,3 @@ export default reporter(({ type, payload }) => {
 
 // inside Adobe DTM we create a direct call rule with the same name/condition as our action type
 ```
-
